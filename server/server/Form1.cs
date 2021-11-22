@@ -55,8 +55,9 @@ namespace server
         private void read_file()
         {
             string line;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "user-db.txt");
-            System.IO.StreamReader file = new System.IO.StreamReader(@"C:\Users\LENOVO\cs408 project\user-db.txt");
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "user-db.txt");
+            System.IO.StreamReader file = new System.IO.StreamReader(path);
             while ((line = file.ReadLine()) != null)
             {
                 users.Add(line);
@@ -144,7 +145,6 @@ namespace server
                 {
                     string client_name = "";
                     Socket newClient = serverSocket.Accept();
-                    // clientSockets.Add(newClient);
 
                     if(is_authorized(newClient,ref client_name))
                     {
@@ -152,21 +152,19 @@ namespace server
                         if (!clientSocketsDictionary.ContainsKey(client_name)) // checks if the user already connected
                         {
                             
-                            send_message(newClient, "authorized\n");
+                            send_message(newClient, "authorized");
                             clientSocketsDictionary.Add(client_name, newClient);
                             connected_users.Add(client_name);
                             logs.AppendText(client_name + " is connected.\n");
                             logs.ScrollToCaret();
 
                
-                            //Thread receiveThread = new Thread(Receive);
-                            //receiveThread.Start();
                         }
                         else
                         {
                             logs.AppendText(client_name + " is trying to connect again\n");
                             logs.ScrollToCaret();
-                            //send_message(newClient, "already connected");
+                            send_message(newClient, "already connected");
                             newClient.Close();
                         }
 
@@ -175,15 +173,13 @@ namespace server
                     {
                         logs.AppendText(client_name + " is trying to connect but not registered\n");
                         logs.ScrollToCaret();
-                        //send_message(newClient, "not authorized");
+                        send_message(newClient, "not authorized");
                         newClient.Close();
                     }
 
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
-
-                    //Thread receiveThread = new Thread(Receive);
-                    //receiveThread.Start();
+                    
                 }
                 catch
                 {
@@ -203,8 +199,9 @@ namespace server
         private void Receive(Socket thisClient) // updated
         {
             bool connected = true;
+            string name = connected_users[connected_users.Count() - 1];
 
-            while(connected && !terminating)
+            while (connected && !terminating)
             {
                 try
                 {
@@ -224,26 +221,34 @@ namespace server
 
                     if (incomingMessage == "R-E-Q-U-E-S-T")
                     {
+                        logs.AppendText(username + " requested Sweet Feed\n");
                         string feed_messages = "F-E-E-D";
                         try
-                        { 
-                            for (int i = 0; i <= sweets.Count; i++)
+                        {
+                            foreach (Sweet message in sweets)
                             {
-                                if (sweets[i].username != username)
+                                if (message.username != username)
                                 {
-                                    feed_messages += sweets[i].id.ToString() + "- " + sweets[i].date.ToString() + " " + sweets[i].username + " : " + sweets[i].message + " \n";
-
+                                    string current_mes = message.id.ToString() + " - " + message.date.ToString() + " " + message.username + " : " + message.message + " \n";
+                                    feed_messages = feed_messages + current_mes;
                                 }
                             }
                             send_message(thisClient, feed_messages);
                         }
                         catch
                         {
-                            logs.AppendText("ups");
+                            logs.AppendText("An error occurred while preparing feed request!");
                         }
 
                     }
-                    else
+                    else if(incomingMessage == "D-I-S-C-O-N-N-E-C-T")
+                    {
+                        thisClient.Close();
+                        clientSockets.Remove(thisClient);
+                        connected_users.Remove(name);
+                        clientSocketsDictionary.Remove(name);
+                    }
+                    else if(incomingMessage.Length != 0)
                     {
                         DateTime postedDate = DateTime.Now;
                   
@@ -251,13 +256,12 @@ namespace server
                         id_counter += 1;
                         sweets.Add(sweet);
 
-                        string myfile = @"C:\Users\LENOVO\cs408 project\messages.txt";
-                        string path = System.AppDomain.CurrentDomain.BaseDirectory;
-                        path += "messages.txt";
-                        //logs.AppendText(path);
+                        // get the project directory
+                        string workingDirectory = Environment.CurrentDirectory;
+                        var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
 
-                        // Appending the given texts
-                        using (StreamWriter sw = File.AppendText(myfile))
+                        // Write sweets to messages.txt file
+                        using (StreamWriter sw = File.AppendText(path))
                         {
                             sw.WriteLine(username + " - " + postedDate + ": " + incomingMessage);
                         }
@@ -269,10 +273,12 @@ namespace server
                 {
                     if(!terminating)
                     {
-                        logs.AppendText("A client has disconnected\n");
+                        logs.AppendText(name + " has disconnected\n");
                     }
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
+                    connected_users.Remove(name);
+                    clientSocketsDictionary.Remove(name);
                     connected = false;
                 }
             }
@@ -280,12 +286,10 @@ namespace server
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string myfile = @"C:\Users\LENOVO\cs408 project\messages.txt";
-            string path = System.AppDomain.CurrentDomain.BaseDirectory;
-            path += "messages.txt";
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
 
-
-            File.WriteAllText(myfile, String.Empty);
+            File.WriteAllText(path, String.Empty);
             listening = false;
             terminating = true;
             Environment.Exit(0);

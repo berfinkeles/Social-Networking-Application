@@ -40,6 +40,7 @@
             this.textBox_username = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button_feed = new System.Windows.Forms.Button();
+            this.button_disconnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -158,11 +159,24 @@
             this.button_feed.UseVisualStyleBackColor = true;
             this.button_feed.Click += new System.EventHandler(this.button_feed_Click);
             // 
+            // button_disconnect
+            // 
+            this.button_disconnect.Enabled = false;
+            this.button_disconnect.Location = new System.Drawing.Point(100, 272);
+            this.button_disconnect.Margin = new System.Windows.Forms.Padding(2);
+            this.button_disconnect.Name = "button_disconnect";
+            this.button_disconnect.Size = new System.Drawing.Size(104, 34);
+            this.button_disconnect.TabIndex = 13;
+            this.button_disconnect.Text = "disconnect";
+            this.button_disconnect.UseVisualStyleBackColor = true;
+            this.button_disconnect.Click += new System.EventHandler(this.button_disconnect_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(675, 551);
+            this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.button_feed);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox_username);
@@ -197,6 +211,7 @@
         private System.Windows.Forms.TextBox textBox_username;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button_feed;
+        private System.Windows.Forms.Button button_disconnect;
     }
 }
 

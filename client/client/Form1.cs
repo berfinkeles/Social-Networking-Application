@@ -31,6 +31,16 @@ namespace client
             buffer = Encoding.Default.GetBytes(message);
             clientSocket.Send(buffer);
         }
+
+        private string receive_response() // recieve 1 mesasge
+        {
+            Byte[] buffer = new Byte[10000000];
+            clientSocket.Receive(buffer);
+            string incomingMessage = Encoding.Default.GetString(buffer);
+            incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+            return incomingMessage;
+        }
+
         private void button_connect_Click(object sender, EventArgs e)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -44,12 +54,26 @@ namespace client
                 {
                     clientSocket.Connect(IP, portNum);
                     send_message(username);
-                    button_connect.Enabled = false;
-                    textBox_message.Enabled = true;
-                    button_send.Enabled = true;
-                    button_feed.Enabled = true;
-                    connected = true;
-                    logs.AppendText("Connected to the server!\n");
+
+                    string server_response = receive_response();
+                    if (server_response == "authorized")
+                    {
+                        button_connect.Enabled = false;
+                        textBox_message.Enabled = true;
+                        button_disconnect.Enabled = true;
+                        button_send.Enabled = true;
+                        button_feed.Enabled = true;
+                        connected = true;
+                        logs.AppendText("Connected to the server!\n");
+                    }
+                    else if(server_response == "already connected")
+                    {
+                        logs.AppendText("This user is already connected to the server!\n");
+                    }
+                    else if (server_response == "not authorized")
+                    {
+                        logs.AppendText("You are not registered to the system!\n");
+                    }
 
                     Thread receiveThread = new Thread(Receive);
                     receiveThread.Start();
@@ -62,7 +86,7 @@ namespace client
             }
             else
             {
-                logs.AppendText("Check the port\n");
+                logs.AppendText("Check the port!\n");
             }
 
         }
@@ -82,13 +106,19 @@ namespace client
 
                     if(incomingMessage.Contains("F-E-E-D"))
                     {
-                        logs.AppendText(incomingMessage.Substring(7));
-                        logs.ScrollToCaret();
+                        if( incomingMessage.Length > 8)
+                        {
+                            // prints the sweets coming from the server
+                            logs.AppendText(incomingMessage.Substring(7));
+                            logs.ScrollToCaret();
+                        }
+                        else
+                        {
+                            // no sweets to show
+                            logs.AppendText("No sweets to show...\n");
+                            logs.ScrollToCaret();
+                        }
                     }
-
-
-
-                    //logs.AppendText("Server: " + incomingMessage + "\n");
                 }
                 catch
                 {
@@ -122,6 +152,7 @@ namespace client
             {
                 Byte[] buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
+                logs.AppendText("Sweet sent successfully!\n");
             }
 
         }
@@ -131,6 +162,24 @@ namespace client
             string feed_message = "R-E-Q-U-E-S-T";
             Byte[] buffer = Encoding.Default.GetBytes(feed_message);
             clientSocket.Send(buffer);
+            logs.AppendText("Requested for Sweet Feed...\n");
+        }
+
+        private void button_disconnect_Click(object sender, EventArgs e)
+        {
+            string message = "D-I-S-C-O-N-N-E-C-T";
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            connected = false;
+            terminating = true;
+            button_connect.Enabled = true;
+            button_disconnect.Enabled = false;
+            button_send.Enabled = false;
+            button_feed.Enabled = false;
+            textBox_message.Enabled = false;
+            clientSocket.Disconnect(false);
+            logs.AppendText("Disconnected\n");
+            logs.ScrollToCaret();
         }
     }
 }
