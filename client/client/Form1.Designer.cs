@@ -39,6 +39,7 @@
             this.button_send = new System.Windows.Forms.Button();
             this.textBox_username = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.button_feed = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -145,11 +146,24 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "username:";
             // 
+            // button_feed
+            // 
+            this.button_feed.Enabled = false;
+            this.button_feed.Location = new System.Drawing.Point(249, 467);
+            this.button_feed.Margin = new System.Windows.Forms.Padding(2);
+            this.button_feed.Name = "button_feed";
+            this.button_feed.Size = new System.Drawing.Size(98, 63);
+            this.button_feed.TabIndex = 12;
+            this.button_feed.Text = "Request Feed";
+            this.button_feed.UseVisualStyleBackColor = true;
+            this.button_feed.Click += new System.EventHandler(this.button_feed_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(675, 551);
+            this.Controls.Add(this.button_feed);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox_username);
             this.Controls.Add(this.button_send);
@@ -182,6 +196,7 @@
         private System.Windows.Forms.Button button_send;
         private System.Windows.Forms.TextBox textBox_username;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button_feed;
     }
 }
 

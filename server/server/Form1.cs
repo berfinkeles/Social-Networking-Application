@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,11 +21,15 @@ namespace server
         {
             public string username;
             public string message;
+            public DateTime date;
+            public int id;
 
-            public Sweet(string username, string message)
+            public Sweet(string username, string message, DateTime date,int id)
             {
                 this.username = username;
                 this.message = message;
+                this.date = date;
+                this.id = id;
             }
         }
 
@@ -37,6 +42,8 @@ namespace server
 
         bool terminating = false;
         bool listening = false;
+
+        int id_counter = 1;
 
         public Form1()
         {
@@ -174,6 +181,9 @@ namespace server
 
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
+
+                    //Thread receiveThread = new Thread(Receive);
+                    //receiveThread.Start();
                 }
                 catch
                 {
@@ -198,7 +208,7 @@ namespace server
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[10000000];
                     thisClient.Receive(buffer);
                     string username="";
 
@@ -209,13 +219,51 @@ namespace server
                             username = keyVar;
                         }
                     }
-                    logs.AppendText(username);
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                    Sweet sweet = new Sweet(username,incomingMessage);
-                    sweets.Add(sweet);
-                   
-                    logs.AppendText(username + " posted a sweet!\n");
+
+                    if (incomingMessage == "R-E-Q-U-E-S-T")
+                    {
+                        string feed_messages = "F-E-E-D";
+                        try
+                        { 
+                            for (int i = 0; i <= sweets.Count; i++)
+                            {
+                                if (sweets[i].username != username)
+                                {
+                                    feed_messages += sweets[i].id.ToString() + "- " + sweets[i].date.ToString() + " " + sweets[i].username + " : " + sweets[i].message + " \n";
+
+                                }
+                            }
+                            send_message(thisClient, feed_messages);
+                        }
+                        catch
+                        {
+                            logs.AppendText("ups");
+                        }
+
+                    }
+                    else
+                    {
+                        DateTime postedDate = DateTime.Now;
+                  
+                        Sweet sweet = new Sweet(username, incomingMessage,postedDate, id_counter);
+                        id_counter += 1;
+                        sweets.Add(sweet);
+
+                        string myfile = @"C:\Users\LENOVO\cs408 project\messages.txt";
+                        string path = System.AppDomain.CurrentDomain.BaseDirectory;
+                        path += "messages.txt";
+                        //logs.AppendText(path);
+
+                        // Appending the given texts
+                        using (StreamWriter sw = File.AppendText(myfile))
+                        {
+                            sw.WriteLine(username + " - " + postedDate + ": " + incomingMessage);
+                        }
+
+                        logs.AppendText(username + " posted a sweet!\n");
+                    }
                 }
                 catch
                 {
@@ -232,6 +280,12 @@ namespace server
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            string myfile = @"C:\Users\LENOVO\cs408 project\messages.txt";
+            string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            path += "messages.txt";
+
+
+            File.WriteAllText(myfile, String.Empty);
             listening = false;
             terminating = true;
             Environment.Exit(0);

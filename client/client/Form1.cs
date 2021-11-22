@@ -47,11 +47,12 @@ namespace client
                     button_connect.Enabled = false;
                     textBox_message.Enabled = true;
                     button_send.Enabled = true;
+                    button_feed.Enabled = true;
                     connected = true;
                     logs.AppendText("Connected to the server!\n");
 
-                    //Thread receiveThread = new Thread(Receive);
-                    //receiveThread.Start();
+                    Thread receiveThread = new Thread(Receive);
+                    receiveThread.Start();
 
                 }
                 catch
@@ -73,13 +74,21 @@ namespace client
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[10000000];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    logs.AppendText("Server: " + incomingMessage + "\n");
+                    if(incomingMessage.Contains("F-E-E-D"))
+                    {
+                        logs.AppendText(incomingMessage.Substring(7));
+                        logs.ScrollToCaret();
+                    }
+
+
+
+                    //logs.AppendText("Server: " + incomingMessage + "\n");
                 }
                 catch
                 {
@@ -117,6 +126,11 @@ namespace client
 
         }
 
-  
+        private void button_feed_Click(object sender, EventArgs e)
+        {
+            string feed_message = "R-E-Q-U-E-S-T";
+            Byte[] buffer = Encoding.Default.GetBytes(feed_message);
+            clientSocket.Send(buffer);
+        }
     }
 }
