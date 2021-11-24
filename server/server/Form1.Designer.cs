@@ -37,7 +37,7 @@
             // textBox_port
             // 
             this.textBox_port.Location = new System.Drawing.Point(131, 106);
-            this.textBox_port.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_port.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_port.Name = "textBox_port";
             this.textBox_port.Size = new System.Drawing.Size(205, 26);
             this.textBox_port.TabIndex = 0;
@@ -55,7 +55,7 @@
             // button_listen
             // 
             this.button_listen.Location = new System.Drawing.Point(351, 101);
-            this.button_listen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_listen.Margin = new System.Windows.Forms.Padding(2);
             this.button_listen.Name = "button_listen";
             this.button_listen.Size = new System.Drawing.Size(83, 34);
             this.button_listen.TabIndex = 2;
@@ -66,8 +66,9 @@
             // logs
             // 
             this.logs.Location = new System.Drawing.Point(63, 173);
-            this.logs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
+            this.logs.ReadOnly = true;
             this.logs.Size = new System.Drawing.Size(506, 262);
             this.logs.TabIndex = 3;
             this.logs.Text = "";
@@ -81,7 +82,7 @@
             this.Controls.Add(this.button_listen);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox_port);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);

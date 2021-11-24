@@ -95,6 +95,7 @@
             this.logs.Location = new System.Drawing.Point(365, 80);
             this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
+            this.logs.ReadOnly = true;
             this.logs.Size = new System.Drawing.Size(286, 399);
             this.logs.TabIndex = 5;
             this.logs.Text = "";

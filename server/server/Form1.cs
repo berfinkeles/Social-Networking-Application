@@ -39,6 +39,7 @@ namespace server
         List<string> users = new List<string>(); // usernames in the "user-db.txt"
         List<string> connected_users = new List<string>(); // names of connected users
         List<Sweet> sweets = new List<Sweet>();
+        List<string> feed = new List<string>();
 
         bool terminating = false;
         bool listening = false;
@@ -52,7 +53,7 @@ namespace server
             InitializeComponent();
         }
 
-        private void read_file()
+        private void read_file() // reads the user-db.txt and stores contents in users list
         {
             string line;
             string workingDirectory = Environment.CurrentDirectory;
@@ -65,16 +66,57 @@ namespace server
             file.Close();
         }
 
+        private void read_messages() // reads messages.txt and stores in feed list
+        {
+            string line;
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
+            System.IO.StreamReader file = new System.IO.StreamReader(path);
+            while ((line = file.ReadLine()) != null)
+            {
+                feed.Add(line);
+            }
+            file.Close();
+        }
 
+        private int get_lastID() // reads messages.txt and returns the id of last sweet
+        {
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
+            System.IO.StreamReader file = new System.IO.StreamReader(path);
+            if(new FileInfo(path).Length == 0)
+            {
+                file.Close();
+                return 0;
+            }
+            else
+            {
+                string lastLine = File.ReadLines(path).Last();
+                int stopIndex = lastLine.IndexOf(" ", lastLine.IndexOf(":"));
+                int length = stopIndex - lastLine.IndexOf(":");
+                string id = lastLine.Substring(lastLine.IndexOf(":")+1, length);
+                int lastID = Int32.Parse(id);
+                file.Close();
+                return lastID;
+            }
+            
+           
+        }
 
-
-
+        
         private void button_listen_Click(object sender, EventArgs e)
         {
             int serverPort;
-            read_file();
-              
-            if(Int32.TryParse(textBox_port.Text, out serverPort))
+            read_file(); // read user-db.txt
+
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
+
+            if (Int32.TryParse(textBox_port.Text, out serverPort))
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
                 serverSocket.Bind(endPoint);
@@ -199,7 +241,7 @@ namespace server
         private void Receive(Socket thisClient) // updated
         {
             bool connected = true;
-            string name = connected_users[connected_users.Count() - 1];
+            string name = connected_users[connected_users.Count() - 1]; //username of thisClient
 
             while (connected && !terminating)
             {
@@ -216,24 +258,26 @@ namespace server
                             username = keyVar;
                         }
                     }
+                    // gets the message from client
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    if (incomingMessage == "R-E-Q-U-E-S-T")
+                    if (incomingMessage == "R-E-Q-U-E-S-T") // client requested sweet feed
                     {
                         logs.AppendText(username + " requested Sweet Feed\n");
-                        string feed_messages = "F-E-E-D";
+                        string feed_messages = "F-E-E-D"; // this will be sent to client
                         try
                         {
-                            foreach (Sweet message in sweets)
+                            read_messages(); // get contents of messages.txt
+                            foreach (string message in feed)
                             {
-                                if (message.username != username)
+                                if (message.Substring(0, message.IndexOf(' ')) != username)
                                 {
-                                    string current_mes = message.id.ToString() + " - " + message.date.ToString() + " " + message.username + " : " + message.message + " \n";
-                                    feed_messages = feed_messages + current_mes;
+                                    feed_messages = feed_messages + message + "\n";
                                 }
                             }
                             send_message(thisClient, feed_messages);
+                            feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
                         }
                         catch
                         {
@@ -247,8 +291,9 @@ namespace server
                         clientSockets.Remove(thisClient);
                         connected_users.Remove(name);
                         clientSocketsDictionary.Remove(name);
+                        
                     }
-                    else if(incomingMessage.Length != 0)
+                    else if(incomingMessage.Length != 0) // client has posted a sweet
                     {
                         DateTime postedDate = DateTime.Now;
                   
@@ -259,11 +304,12 @@ namespace server
                         // get the project directory
                         string workingDirectory = Environment.CurrentDirectory;
                         var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
-
+                        int id = get_lastID()+1;
+                        
                         // Write sweets to messages.txt file
                         using (StreamWriter sw = File.AppendText(path))
                         {
-                            sw.WriteLine(username + " - " + postedDate + ": " + incomingMessage);
+                            sw.WriteLine(username + " - id:" + id + " - date:" + postedDate + ": " + incomingMessage);
                         }
 
                         logs.AppendText(username + " posted a sweet!\n");
@@ -286,10 +332,10 @@ namespace server
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string workingDirectory = Environment.CurrentDirectory;
-            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
+            // string workingDirectory = Environment.CurrentDirectory;
+            // var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
 
-            File.WriteAllText(path, String.Empty);
+            // File.WriteAllText(path, String.Empty);
             listening = false;
             terminating = true;
             Environment.Exit(0);

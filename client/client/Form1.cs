@@ -126,6 +126,7 @@ namespace client
                     {
                         logs.AppendText("The server has disconnected\n");
                         button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                     }
