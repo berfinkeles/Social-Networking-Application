@@ -79,6 +79,9 @@ namespace server
             file.Close();
         }
 
+
+
+
         private int get_lastID() // reads messages.txt and returns the id of last sweet
         {
             string workingDirectory = Environment.CurrentDirectory;
@@ -108,8 +111,25 @@ namespace server
         {
             int serverPort;
             read_file(); // read user-db.txt
-
             string workingDirectory = Environment.CurrentDirectory;
+            var path_follow = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+            if (!File.Exists(Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt")))
+            {
+
+                using (FileStream fs = File.Create(path_follow))
+                {
+                    foreach(string usr in users)
+                    {
+                        Byte[] title = new UTF8Encoding(true).GetBytes(usr + " \n");
+                        fs.Write(title, 0, title.Length);
+                    }
+                    
+                }
+            }
+
+            
+
+            
             var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
             if (!File.Exists(path))
             {
@@ -199,8 +219,10 @@ namespace server
                             connected_users.Add(client_name);
                             logs.AppendText(client_name + " is connected.\n");
                             logs.ScrollToCaret();
+                            Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                            receiveThread.Start();
 
-               
+
                         }
                         else
                         {
@@ -219,8 +241,7 @@ namespace server
                         newClient.Close();
                     }
 
-                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                    receiveThread.Start();
+                    
                     
                 }
                 catch
@@ -292,6 +313,70 @@ namespace server
                         connected_users.Remove(name);
                         clientSocketsDictionary.Remove(name);
                         
+                    }
+                    else if(incomingMessage == "R-E-Q-U-S-E-R")
+                    {
+                        string userListMessage = "U-S-E-R-L-I-S-T";
+                        foreach (string user in users)
+                        {
+                            userListMessage = userListMessage + user + "\n";
+                        }
+                        send_message(thisClient, userListMessage);
+                    }
+                    else if (incomingMessage.Contains("F-O-L-L-O-W"))
+                    {
+                        string user_to_follow = incomingMessage.Substring(11);
+                        logs.AppendText(username + " tried to follow " + incomingMessage.Substring(11)+"\n");
+                        if(username == user_to_follow)
+                        {
+                            logs.AppendText("User can not follow herself\n");
+                        }
+                        else
+                        {
+                            string Message = "N-O-T-I-N-D-B-FOLLOW";
+                            bool inDatabase = false;
+                            string workingDirectory = Environment.CurrentDirectory;
+                            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+                            foreach (string user in users)
+                            {
+                                if(user == user_to_follow) // if user in ddatabase
+                                {
+                                    inDatabase = true;
+                                    string[] arrLine = File.ReadAllLines(path);
+                                    for(int i = 0; i < arrLine.Length; i++)
+                                    {
+                                        string array_user = arrLine[i];
+                                        if(array_user.Substring(0, array_user.IndexOf(" ")) == username)
+                                        {
+                                            if (array_user.Contains(user_to_follow)) //contains
+                                            {
+                                                logs.AppendText(username+ " already follows " + user_to_follow + "\n");
+                                                send_message(thisClient, "A-L-R-F-O-L");
+
+                                            }
+                                            else //ekle
+                                            {
+                                                logs.AppendText(username + " succesfully followed " + user_to_follow + "\n");
+                                                arrLine[i] = arrLine[i] + " " + user_to_follow;
+                                                File.WriteAllLines(path, arrLine);
+                                                break;
+
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                            if(inDatabase == false)
+                            {
+                                logs.AppendText("Requested user to follow is not in the database");
+                                send_message(thisClient, Message);
+                            }
+
+                        }
+
                     }
                     else if(incomingMessage.Length != 0) // client has posted a sweet
                     {

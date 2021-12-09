@@ -60,9 +60,13 @@ namespace client
                     {
                         button_connect.Enabled = false;
                         textBox_message.Enabled = true;
+                        textBox_follow.Enabled = true;
                         button_disconnect.Enabled = true;
                         button_send.Enabled = true;
                         button_feed.Enabled = true;
+                        button_users.Enabled = true;
+                        button_follow.Enabled = true;
+
                         connected = true;
                         logs.AppendText("Connected to the server!\n");
                     }
@@ -118,6 +122,24 @@ namespace client
                             logs.AppendText("No sweets to show...\n");
                             logs.ScrollToCaret();
                         }
+                    }
+                    else if(incomingMessage.Contains("U-S-E-R-L-I-S-T"))
+                    {
+                        logs.AppendText("*********************\n");
+                        logs.AppendText(incomingMessage.Substring(15));
+                        logs.AppendText("*********************\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("N-O-T-I-N-D-B-FOLLOW"))
+                    {
+                        logs.AppendText("Requested user to follow is not in the database\n");
+                        logs.AppendText("Please enter a valid username\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("A-L-R-F-O-L"))
+                    {
+                        logs.AppendText("You already follow this user\n");
+                        logs.ScrollToCaret();
                     }
                 }
                 catch
@@ -177,10 +199,30 @@ namespace client
             button_disconnect.Enabled = false;
             button_send.Enabled = false;
             button_feed.Enabled = false;
+            button_users.Enabled = false;
             textBox_message.Enabled = false;
             clientSocket.Disconnect(false);
             logs.AppendText("Disconnected\n");
             logs.ScrollToCaret();
+        }
+
+        private void button_users_Click(object sender, EventArgs e)
+        {
+            string message = "R-E-Q-U-S-E-R";
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Requested users\n");
+            logs.ScrollToCaret();
+        }
+
+        private void button_follow_Click(object sender, EventArgs e)
+        {
+            string message = "F-O-L-L-O-W" + textBox_follow.Text;
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Follow request sent!\n");
+            logs.ScrollToCaret();
+
         }
     }
 }

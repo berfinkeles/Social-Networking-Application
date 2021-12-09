@@ -41,6 +41,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.button_feed = new System.Windows.Forms.Button();
             this.button_disconnect = new System.Windows.Forms.Button();
+            this.button_users = new System.Windows.Forms.Button();
+            this.textBox_follow = new System.Windows.Forms.TextBox();
+            this.button_follow = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -92,11 +95,11 @@
             // 
             // logs
             // 
-            this.logs.Location = new System.Drawing.Point(365, 80);
+            this.logs.Location = new System.Drawing.Point(430, 68);
             this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
             this.logs.ReadOnly = true;
-            this.logs.Size = new System.Drawing.Size(286, 399);
+            this.logs.Size = new System.Drawing.Size(301, 386);
             this.logs.TabIndex = 5;
             this.logs.Text = "";
             // 
@@ -151,10 +154,10 @@
             // button_feed
             // 
             this.button_feed.Enabled = false;
-            this.button_feed.Location = new System.Drawing.Point(249, 467);
+            this.button_feed.Location = new System.Drawing.Point(430, 25);
             this.button_feed.Margin = new System.Windows.Forms.Padding(2);
             this.button_feed.Name = "button_feed";
-            this.button_feed.Size = new System.Drawing.Size(98, 63);
+            this.button_feed.Size = new System.Drawing.Size(301, 39);
             this.button_feed.TabIndex = 12;
             this.button_feed.Text = "Request Feed";
             this.button_feed.UseVisualStyleBackColor = true;
@@ -163,7 +166,7 @@
             // button_disconnect
             // 
             this.button_disconnect.Enabled = false;
-            this.button_disconnect.Location = new System.Drawing.Point(100, 272);
+            this.button_disconnect.Location = new System.Drawing.Point(224, 224);
             this.button_disconnect.Margin = new System.Windows.Forms.Padding(2);
             this.button_disconnect.Name = "button_disconnect";
             this.button_disconnect.Size = new System.Drawing.Size(104, 34);
@@ -172,11 +175,47 @@
             this.button_disconnect.UseVisualStyleBackColor = true;
             this.button_disconnect.Click += new System.EventHandler(this.button_disconnect_Click);
             // 
+            // button_users
+            // 
+            this.button_users.Enabled = false;
+            this.button_users.Location = new System.Drawing.Point(100, 279);
+            this.button_users.Margin = new System.Windows.Forms.Padding(2);
+            this.button_users.Name = "button_users";
+            this.button_users.Size = new System.Drawing.Size(228, 32);
+            this.button_users.TabIndex = 14;
+            this.button_users.Text = "Users";
+            this.button_users.UseVisualStyleBackColor = true;
+            this.button_users.Click += new System.EventHandler(this.button_users_Click);
+            // 
+            // textBox_follow
+            // 
+            this.textBox_follow.Enabled = false;
+            this.textBox_follow.Location = new System.Drawing.Point(430, 475);
+            this.textBox_follow.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_follow.Name = "textBox_follow";
+            this.textBox_follow.Size = new System.Drawing.Size(145, 26);
+            this.textBox_follow.TabIndex = 15;
+            // 
+            // button_follow
+            // 
+            this.button_follow.Enabled = false;
+            this.button_follow.Location = new System.Drawing.Point(595, 467);
+            this.button_follow.Margin = new System.Windows.Forms.Padding(2);
+            this.button_follow.Name = "button_follow";
+            this.button_follow.Size = new System.Drawing.Size(136, 43);
+            this.button_follow.TabIndex = 16;
+            this.button_follow.Text = "follow";
+            this.button_follow.UseVisualStyleBackColor = true;
+            this.button_follow.Click += new System.EventHandler(this.button_follow_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 551);
+            this.ClientSize = new System.Drawing.Size(762, 554);
+            this.Controls.Add(this.button_follow);
+            this.Controls.Add(this.textBox_follow);
+            this.Controls.Add(this.button_users);
             this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.button_feed);
             this.Controls.Add(this.label4);
@@ -213,6 +252,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button_feed;
         private System.Windows.Forms.Button button_disconnect;
+        private System.Windows.Forms.Button button_users;
+        private System.Windows.Forms.TextBox textBox_follow;
+        private System.Windows.Forms.Button button_follow;
     }
 }
 
