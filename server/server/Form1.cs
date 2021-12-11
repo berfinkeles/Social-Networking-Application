@@ -306,6 +306,31 @@ namespace server
                         }
 
                     }
+                    else if (incomingMessage == "R-E-Q-U-E-S-T-F") // client requested sweet feed only from followers
+                    {
+                        logs.AppendText(username + " requested Sweet Feed From Their Followings\n");
+                        string followings = get_followings(username);//can add the functionality to check for users with no followings bur didn't
+                        string feed_messages = "F-E-E-D"; // this will be sent to client
+                        try
+                        {
+                            read_messages(); // get contents of messages.txt
+                            foreach (string message in feed)
+                            {
+                                string sweet_sender = message.Substring(0, message.IndexOf(' '));
+                                if (sweet_sender != username && followings.Contains(sweet_sender))//if add every sweet that the requester follows
+                                {
+                                    feed_messages = feed_messages + message + "\n";
+                                }
+                            }
+                            send_message(thisClient, feed_messages);
+                            feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
+                        }
+                        catch
+                        {
+                            logs.AppendText("An error occurred while preparing feed request!");
+                        }
+
+                    }
                     else if(incomingMessage == "D-I-S-C-O-N-N-E-C-T")
                     {
                         thisClient.Close();
@@ -426,7 +451,29 @@ namespace server
             Environment.Exit(0);
         }
 
-        
-        
+        private string get_followings(string username)
+        {
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+            string followings = "";
+            string[] arrLine = File.ReadAllLines(path);
+            for (int i = 0; i < arrLine.Length; i++)
+            {
+                string array_user = arrLine[i];
+                if (array_user.Substring(0, array_user.IndexOf(" ")) == username)//find the line that belongs to the user that makes the request
+                {
+                    followings = array_user.Substring(username.Length+1); 
+                    //followings = follows_str.Split(' ');//add each following to the list
+                    break;
+                }
+
+                
+            }
+
+            return followings;
+        }
+
+
+
     }
 }

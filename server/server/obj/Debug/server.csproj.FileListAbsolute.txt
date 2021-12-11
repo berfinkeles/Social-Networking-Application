@@ -58,3 +58,12 @@ C:\Users\LENOVO\Desktop\cs408 step2\Social-Networking-Application\server\server\
 C:\Users\LENOVO\Desktop\cs408 step2\Social-Networking-Application\server\server\obj\Debug\server.Form1.resources
 C:\Users\LENOVO\Desktop\cs408 step2\Social-Networking-Application\server\server\obj\Debug\server.Properties.Resources.resources
 C:\Users\LENOVO\Desktop\cs408 step2\Social-Networking-Application\server\server\obj\Debug\server.csproj.GenerateResource.Cache
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\bin\Debug\server.exe.config
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.exe
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.pdb
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\bin\Debug\server.exe
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\bin\Debug\server.pdb
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.csprojResolveAssemblyReference.cache
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.Form1.resources
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.Properties.Resources.resources
+C:\Users\cemrt\Desktop\Social-Networking-Application-follow-feed-request-cem-\server\server\obj\Debug\server.csproj.GenerateResource.Cache
