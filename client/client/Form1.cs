@@ -66,6 +66,7 @@ namespace client
                         button_feed.Enabled = true;
                         button_users.Enabled = true;
                         button_follow.Enabled = true;
+                        checkBox_onlyfollows.Enabled = true;
 
                         connected = true;
                         logs.AppendText("Connected to the server!\n");
@@ -123,6 +124,7 @@ namespace client
                             logs.ScrollToCaret();
                         }
                     }
+                    
                     else if(incomingMessage.Contains("U-S-E-R-L-I-S-T"))
                     {
                         logs.AppendText("*********************\n");
@@ -182,10 +184,21 @@ namespace client
 
         private void button_feed_Click(object sender, EventArgs e)
         {
-            string feed_message = "R-E-Q-U-E-S-T";
+            string feed_message;
+            if (checkBox_onlyfollows.Checked)
+            {
+                feed_message = "R-E-Q-U-E-S-T-F";
+                logs.AppendText("Requested for Sweet Feed From Followings...\n");
+            }
+            else
+            {
+                feed_message = "R-E-Q-U-E-S-T";
+                logs.AppendText("Requested for Sweet Feed...\n");
+            }
+            
             Byte[] buffer = Encoding.Default.GetBytes(feed_message);
             clientSocket.Send(buffer);
-            logs.AppendText("Requested for Sweet Feed...\n");
+            
         }
 
         private void button_disconnect_Click(object sender, EventArgs e)
@@ -201,6 +214,8 @@ namespace client
             button_feed.Enabled = false;
             button_users.Enabled = false;
             textBox_message.Enabled = false;
+            checkBox_onlyfollows.Enabled = false;
+
             clientSocket.Disconnect(false);
             logs.AppendText("Disconnected\n");
             logs.ScrollToCaret();
@@ -222,7 +237,8 @@ namespace client
             clientSocket.Send(buffer);
             logs.AppendText("Follow request sent!\n");
             logs.ScrollToCaret();
-
         }
+
+
     }
 }
