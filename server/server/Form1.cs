@@ -302,7 +302,7 @@ namespace server
                         }
                         catch
                         {
-                            logs.AppendText("An error occurred while preparing feed request!");
+                            logs.AppendText("An error occurred while preparing feed request!\n");
                         }
 
                     }
@@ -327,7 +327,7 @@ namespace server
                         }
                         catch
                         {
-                            logs.AppendText("An error occurred while preparing feed request!");
+                            logs.AppendText("An error occurred while preparing feed request!\n");
                         }
 
                     }
@@ -351,14 +351,15 @@ namespace server
                     else if (incomingMessage.Contains("F-O-L-L-O-W"))
                     {
                         string user_to_follow = incomingMessage.Substring(11);
-                        logs.AppendText(username + " tried to follow " + incomingMessage.Substring(11)+"\n");
+                        logs.AppendText(username + " requested to follow " + incomingMessage.Substring(11)+"\n");
                         if(username == user_to_follow)
                         {
                             logs.AppendText("User can not follow herself\n");
+                            send_message(thisClient, "F-O-L-YOURSELF");
                         }
                         else
                         {
-                            string Message = "N-O-T-I-N-D-B-FOLLOW";
+                            
                             bool inDatabase = false;
                             string workingDirectory = Environment.CurrentDirectory;
                             var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
@@ -379,11 +380,12 @@ namespace server
                                                 send_message(thisClient, "A-L-R-F-O-L");
 
                                             }
-                                            else //ekle
+                                            else //add user to followings
                                             {
-                                                logs.AppendText(username + " succesfully followed " + user_to_follow + "\n");
                                                 arrLine[i] = arrLine[i] + " " + user_to_follow;
                                                 File.WriteAllLines(path, arrLine);
+                                                logs.AppendText(username + " succesfully followed " + user_to_follow + "\n");
+                                                send_message(thisClient, "S-U-C-C-F-O-L");
                                                 break;
 
                                             }
@@ -396,7 +398,8 @@ namespace server
 
                             if(inDatabase == false)
                             {
-                                logs.AppendText("Requested user to follow is not in the database");
+                                string Message = "N-O-T-I-N-D-B-FOLLOW";
+                                logs.AppendText("Requested user to follow is not in the database\n");
                                 send_message(thisClient, Message);
                             }
 
