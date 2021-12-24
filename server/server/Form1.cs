@@ -113,6 +113,7 @@ namespace server
             read_file(); // read user-db.txt
             string workingDirectory = Environment.CurrentDirectory;
             var path_follow = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+            // Initialize follows.txt
             if (!File.Exists(Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt")))
             {
 
@@ -129,7 +130,7 @@ namespace server
 
             
 
-            
+            // Initialize messages.txt
             var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
             if (!File.Exists(path))
             {
@@ -271,7 +272,7 @@ namespace server
                     Byte[] buffer = new Byte[10000000];
                     thisClient.Receive(buffer);
                     string username="";
-
+                    // Getting the username of the current client
                     foreach (string keyVar in clientSocketsDictionary.Keys)
                     {
                         if (clientSocketsDictionary[keyVar] == thisClient)
@@ -318,6 +319,30 @@ namespace server
                             {
                                 string sweet_sender = message.Substring(0, message.IndexOf(' '));
                                 if (sweet_sender != username && followings.Contains(sweet_sender))//if add every sweet that the requester follows
+                                {
+                                    feed_messages = feed_messages + message + "\n";
+                                }
+                            }
+                            send_message(thisClient, feed_messages);
+                            feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
+                        }
+                        catch
+                        {
+                            logs.AppendText("An error occurred while preparing feed request!\n");
+                        }
+
+                    }
+                    else if (incomingMessage == "R-E-Q-U-E-S-T-MYS") // client requested her own sweets
+                    {
+                        logs.AppendText(username + " requested their own sweets\n");
+                        string feed_messages = "F-E-E-D"; // this will be sent to client
+                        try
+                        {
+                            read_messages(); // get contents of messages.txt
+                            foreach (string message in feed)
+                            {
+                                string sweet_sender = message.Substring(0, message.IndexOf(' '));
+                                if (sweet_sender == username) //if sweet is posted by the user
                                 {
                                     feed_messages = feed_messages + message + "\n";
                                 }
@@ -405,6 +430,80 @@ namespace server
 
                         }
 
+                    }
+                    else if(incomingMessage.Contains("D-E-L-E-T-E-MES"))
+                    {
+                        string id_to_delete = incomingMessage.Substring(15);
+                        bool sweet_exist = false; // if sweet exists with that id
+                        bool correct_owner = false; // if message to deleted is owned by the user
+                        logs.AppendText(username + " requested to delete message with id: " + id_to_delete + " \n");
+                        try
+                        {
+                            read_messages(); // get contents of messages.txt
+                            foreach (string message in feed)
+                            {
+                                string username_text = message.Substring(0, message.IndexOf(' '));
+                                string temp_line = message.Substring(message.IndexOf(':')+1);
+                                string id_text = temp_line.Substring(0, temp_line.IndexOf(' '));
+                                if (id_text == id_to_delete) // sweet exists with that id
+                                {
+                                    sweet_exist = true;
+                                    if (username_text == username ) // sweet belongs to the user
+                                    {
+                                        // message will be deleted
+                                        correct_owner = true;
+
+                                        // get the project directory
+                                        string workingDirectory = Environment.CurrentDirectory;
+                                        var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
+
+                                        // Write all sweets except the one to be deleted
+                                        string tempFile = Path.GetTempFileName();
+
+                                        using (var sr = new StreamReader(path))
+                                        using (StreamWriter sw = File.AppendText(tempFile))
+                                        {
+                                            string line;
+
+                                            while ((line = sr.ReadLine()) != null)
+                                            {
+                                                if (line != message)
+                                                    sw.WriteLine(line);
+                                            }
+                                        }
+                                        File.Delete(path);
+                                        File.Move(tempFile, path);
+
+                                        send_message(thisClient, "D-E-L-E-T-E-SUCC");
+                                        feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
+                                        logs.AppendText("Delete Successfull!\n");
+                                        logs.ScrollToCaret();
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!sweet_exist)
+                            {
+                                // sweet doesn't exist
+                                logs.AppendText("Sweet doesn't exist!\n");
+                                logs.ScrollToCaret();
+                                send_message(thisClient, "D-E-L-E-T-E-WRONG-ID");
+                                feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
+                            }
+                            else if (!correct_owner)
+                            {
+                                // sweet exists but owner is wrong
+                                logs.AppendText("User is not authorized to delete this sweet!\n");
+                                logs.ScrollToCaret();
+                                send_message(thisClient, "D-E-L-E-T-E-WRONG-OWNER");
+                                feed.Clear(); // clear the feed list so that client doesn't get duplicate feeds
+                            }
+                        }
+                        catch
+                        {
+                            logs.AppendText("An error occurred while preparing feed request!\n");
+                            logs.ScrollToCaret();
+                        }
                     }
                     else if(incomingMessage.Length != 0) // client has posted a sweet
                     {

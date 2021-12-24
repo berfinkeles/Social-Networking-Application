@@ -60,16 +60,23 @@ namespace client
                     {
                         button_connect.Enabled = false;
                         textBox_message.Enabled = true;
+                        textBox_delete.Enabled = true;
                         textBox_follow.Enabled = true;
                         button_disconnect.Enabled = true;
                         button_send.Enabled = true;
+                        button_delete.Enabled = true;
                         button_feed.Enabled = true;
                         button_users.Enabled = true;
                         button_follow.Enabled = true;
                         checkBox_onlyfollows.Enabled = true;
+                        checkBox_mysweets.Enabled = true;
+                        terminating = false;
 
                         connected = true;
                         logs.AppendText("Connected to the server!\n");
+
+                        Thread receiveThread = new Thread(Receive);
+                        receiveThread.Start();
                     }
                     else if(server_response == "already connected")
                     {
@@ -79,10 +86,7 @@ namespace client
                     {
                         logs.AppendText("You are not registered to the system!\n");
                     }
-
-                    Thread receiveThread = new Thread(Receive);
-                    receiveThread.Start();
-
+                    
                 }
                 catch
                 {
@@ -153,6 +157,21 @@ namespace client
                         logs.AppendText("Successfully followed user!\n");
                         logs.ScrollToCaret();
                     }
+                    else if (incomingMessage.Contains("D-E-L-E-T-E-SUCC"))
+                    {
+                        logs.AppendText("Successfully deleted sweet!\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("D-E-L-E-T-E-WRONG-ID"))
+                    {
+                        logs.AppendText("Sweet doesn't exist, Check the message id!\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("D-E-L-E-T-E-WRONG-OWNER"))
+                    {
+                        logs.AppendText("You are not authorized to delete this sweet!\n");
+                        logs.ScrollToCaret();
+                    }
                 }
                 catch
                 {
@@ -194,11 +213,20 @@ namespace client
 
         private void button_feed_Click(object sender, EventArgs e)
         {
-            string feed_message;
-            if (checkBox_onlyfollows.Checked)
+            string feed_message = "";
+            if (checkBox_onlyfollows.Checked && checkBox_mysweets.Checked)
+            {
+                logs.AppendText("Please select only one option...\n");
+            }
+            else if (checkBox_onlyfollows.Checked)
             {
                 feed_message = "R-E-Q-U-E-S-T-F";
                 logs.AppendText("Requested for Sweet Feed From Followings...\n");
+            }
+            else if (checkBox_mysweets.Checked)
+            {
+                feed_message = "R-E-Q-U-E-S-T-MYS";
+                logs.AppendText("Requested for own sweets...\n");
             }
             else
             {
@@ -207,8 +235,11 @@ namespace client
             }
             try
             {
-                Byte[] buffer = Encoding.Default.GetBytes(feed_message);
-                clientSocket.Send(buffer);
+                if( feed_message != "")
+                {
+                    Byte[] buffer = Encoding.Default.GetBytes(feed_message);
+                    clientSocket.Send(buffer);
+                }
             }
             catch
             {
@@ -231,6 +262,7 @@ namespace client
             button_users.Enabled = false;
             textBox_message.Enabled = false;
             checkBox_onlyfollows.Enabled = false;
+            checkBox_mysweets.Enabled = false;
 
             clientSocket.Disconnect(false);
             logs.AppendText("Disconnected\n");
@@ -255,6 +287,14 @@ namespace client
             logs.ScrollToCaret();
         }
 
-
+        private void button_delete_Click(object sender, EventArgs e)
+        {
+            string id = textBox_delete.Text;
+            string message = "D-E-L-E-T-E-MES" + id;
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Delete request sent!\n");
+            logs.ScrollToCaret();
+        }
     }
 }

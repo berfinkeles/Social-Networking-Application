@@ -76,3 +76,12 @@ C:\Users\LENOVO\Desktop\cs408 step 2 final\Social-Networking-Application\server\
 C:\Users\LENOVO\Desktop\cs408 step 2 final\Social-Networking-Application\server\server\obj\Debug\server.Form1.resources
 C:\Users\LENOVO\Desktop\cs408 step 2 final\Social-Networking-Application\server\server\obj\Debug\server.Properties.Resources.resources
 C:\Users\LENOVO\Desktop\cs408 step 2 final\Social-Networking-Application\server\server\obj\Debug\server.csproj.GenerateResource.Cache
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\bin\Debug\server.exe.config
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.exe
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.pdb
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\bin\Debug\server.exe
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\bin\Debug\server.pdb
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.csprojResolveAssemblyReference.cache
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.Form1.resources
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.Properties.Resources.resources
+C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.csproj.GenerateResource.Cache
