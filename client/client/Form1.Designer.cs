@@ -49,6 +49,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox_delete = new System.Windows.Forms.TextBox();
             this.button_delete = new System.Windows.Forms.Button();
+            this.button_reqFollows = new System.Windows.Forms.Button();
+            this.button_reqFollowers = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -100,7 +102,7 @@
             // 
             // logs
             // 
-            this.logs.Location = new System.Drawing.Point(382, 54);
+            this.logs.Location = new System.Drawing.Point(486, 54);
             this.logs.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.logs.Name = "logs";
             this.logs.ReadOnly = true;
@@ -159,7 +161,7 @@
             // button_feed
             // 
             this.button_feed.Enabled = false;
-            this.button_feed.Location = new System.Drawing.Point(382, 20);
+            this.button_feed.Location = new System.Drawing.Point(486, 21);
             this.button_feed.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.button_feed.Name = "button_feed";
             this.button_feed.Size = new System.Drawing.Size(267, 31);
@@ -195,7 +197,7 @@
             // textBox_follow
             // 
             this.textBox_follow.Enabled = false;
-            this.textBox_follow.Location = new System.Drawing.Point(382, 380);
+            this.textBox_follow.Location = new System.Drawing.Point(486, 380);
             this.textBox_follow.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.textBox_follow.Name = "textBox_follow";
             this.textBox_follow.Size = new System.Drawing.Size(129, 22);
@@ -204,7 +206,7 @@
             // button_follow
             // 
             this.button_follow.Enabled = false;
-            this.button_follow.Location = new System.Drawing.Point(529, 374);
+            this.button_follow.Location = new System.Drawing.Point(632, 374);
             this.button_follow.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.button_follow.Name = "button_follow";
             this.button_follow.Size = new System.Drawing.Size(121, 35);
@@ -217,8 +219,8 @@
             // 
             this.checkBox_onlyfollows.AutoSize = true;
             this.checkBox_onlyfollows.Enabled = false;
-            this.checkBox_onlyfollows.Location = new System.Drawing.Point(266, 27);
-            this.checkBox_onlyfollows.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBox_onlyfollows.Location = new System.Drawing.Point(358, 27);
+            this.checkBox_onlyfollows.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox_onlyfollows.Name = "checkBox_onlyfollows";
             this.checkBox_onlyfollows.Size = new System.Drawing.Size(109, 21);
             this.checkBox_onlyfollows.TabIndex = 17;
@@ -229,7 +231,7 @@
             // 
             this.checkBox_mysweets.AutoSize = true;
             this.checkBox_mysweets.Enabled = false;
-            this.checkBox_mysweets.Location = new System.Drawing.Point(266, 60);
+            this.checkBox_mysweets.Location = new System.Drawing.Point(358, 56);
             this.checkBox_mysweets.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox_mysweets.Name = "checkBox_mysweets";
             this.checkBox_mysweets.Size = new System.Drawing.Size(97, 21);
@@ -268,11 +270,39 @@
             this.button_delete.UseVisualStyleBackColor = true;
             this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
             // 
+            // button_reqFollows
+            // 
+            this.button_reqFollows.Enabled = false;
+            this.button_reqFollows.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button_reqFollows.Location = new System.Drawing.Point(358, 88);
+            this.button_reqFollows.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.button_reqFollows.Name = "button_reqFollows";
+            this.button_reqFollows.Size = new System.Drawing.Size(97, 31);
+            this.button_reqFollows.TabIndex = 22;
+            this.button_reqFollows.Text = "Follows";
+            this.button_reqFollows.UseVisualStyleBackColor = true;
+            this.button_reqFollows.Click += new System.EventHandler(this.button_reqFollows_Click);
+            // 
+            // button_reqFollowers
+            // 
+            this.button_reqFollowers.Enabled = false;
+            this.button_reqFollowers.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button_reqFollowers.Location = new System.Drawing.Point(358, 126);
+            this.button_reqFollowers.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.button_reqFollowers.Name = "button_reqFollowers";
+            this.button_reqFollowers.Size = new System.Drawing.Size(97, 32);
+            this.button_reqFollowers.TabIndex = 23;
+            this.button_reqFollowers.Text = "Followers";
+            this.button_reqFollowers.UseVisualStyleBackColor = true;
+            this.button_reqFollowers.Click += new System.EventHandler(this.button_reqFollowers_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 443);
+            this.ClientSize = new System.Drawing.Size(774, 443);
+            this.Controls.Add(this.button_reqFollowers);
+            this.Controls.Add(this.button_reqFollows);
             this.Controls.Add(this.button_delete);
             this.Controls.Add(this.textBox_delete);
             this.Controls.Add(this.label5);
@@ -294,6 +324,7 @@
             this.Controls.Add(this.textBox_ip);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -325,6 +356,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox_delete;
         private System.Windows.Forms.Button button_delete;
+        private System.Windows.Forms.Button button_reqFollows;
+        private System.Windows.Forms.Button button_reqFollowers;
     }
 }
 

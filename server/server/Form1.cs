@@ -431,6 +431,72 @@ namespace server
                         }
 
                     }
+                    else if(incomingMessage.Contains("REQUEST-FOLLOWINGS")) //clients requests to see the users he/she follows
+                    {
+                        logs.AppendText(username + " requested to see users they are following.\n");
+                        string line;
+                        string workingDirectory = Environment.CurrentDirectory;
+                        var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+                        System.IO.StreamReader file = new System.IO.StreamReader(path);
+                        string follows_message = "REQUEST-FOLLOWINGS";
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            string first_person = line.Substring(0, line.IndexOf(' '));
+                            
+
+                            if (first_person == username)
+                            {
+                                
+                                string rest_of_the_line = line.Substring(line.IndexOf(' ') + 1);
+                                if (rest_of_the_line == "")
+                                {
+                                    follows_message += "You dont follow anyone.\n";
+                                }
+                                else
+                                follows_message += rest_of_the_line + "\n";
+
+                                break;
+                            }
+
+                            
+                        }
+                        file.Close();
+                        send_message(thisClient, follows_message);
+                    }
+                    else if (incomingMessage.Contains("REQUEST-FOLLOWERS")) // client requests to see their followers
+                    {
+                        
+                        logs.AppendText(username + " requested to see their followers.\n");
+
+                        string line;
+                        string workingDirectory = Environment.CurrentDirectory;
+                        var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+                        System.IO.StreamReader file = new System.IO.StreamReader(path);
+
+                   
+                        string follower_req_message = "REQUEST-FOLLOWERS";
+
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            string first_person = line.Substring(0, line.IndexOf(' '));
+                            string rest_of_the_line = line.Substring(line.IndexOf(' ') + 1);
+
+                            if (rest_of_the_line.Contains(username))
+                            {
+                                follower_req_message += first_person + "\n";
+                            }
+
+                        }
+                        if( follower_req_message == "REQUEST-FOLLOWERS")
+                        {
+                            follower_req_message += "Nobody follows you :( \n";
+                        }
+
+                        file.Close();
+                        send_message(thisClient, follower_req_message);
+
+
+                    }
                     else if(incomingMessage.Contains("D-E-L-E-T-E-MES"))
                     {
                         string id_to_delete = incomingMessage.Substring(15);

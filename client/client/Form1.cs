@@ -68,6 +68,8 @@ namespace client
                         button_feed.Enabled = true;
                         button_users.Enabled = true;
                         button_follow.Enabled = true;
+                        button_reqFollows.Enabled = true;
+                        button_reqFollowers.Enabled = true;
                         checkBox_onlyfollows.Enabled = true;
                         checkBox_mysweets.Enabled = true;
                         terminating = false;
@@ -172,6 +174,23 @@ namespace client
                         logs.AppendText("You are not authorized to delete this sweet!\n");
                         logs.ScrollToCaret();
                     }
+                    else if (incomingMessage.Contains("REQUEST-FOLLOWINGS"))
+                    {
+                        logs.AppendText("Users you are following: \n");
+                        logs.AppendText("*********************\n");
+                        logs.AppendText(incomingMessage.Substring(18));
+                        logs.AppendText("*********************\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("REQUEST-FOLLOWERS"))
+                    {
+                        logs.AppendText("Your followers: \n");
+                        logs.AppendText("*********************\n");
+                        logs.AppendText(incomingMessage.Substring(17));
+                        logs.AppendText("*********************\n");
+                        logs.ScrollToCaret();
+
+                    }
                 }
                 catch
                 {
@@ -260,6 +279,8 @@ namespace client
             button_send.Enabled = false;
             button_feed.Enabled = false;
             button_users.Enabled = false;
+            button_reqFollows.Enabled = false;
+            button_reqFollowers.Enabled = false;
             textBox_message.Enabled = false;
             checkBox_onlyfollows.Enabled = false;
             checkBox_mysweets.Enabled = false;
@@ -294,6 +315,24 @@ namespace client
             Byte[] buffer = Encoding.Default.GetBytes(message);
             clientSocket.Send(buffer);
             logs.AppendText("Delete request sent!\n");
+            logs.ScrollToCaret();
+        }
+
+        private void button_reqFollows_Click(object sender, EventArgs e)
+        {
+            string message = "REQUEST-FOLLOWINGS";
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Following display request sent!\n");
+            logs.ScrollToCaret();
+        }
+
+        private void button_reqFollowers_Click(object sender, EventArgs e)
+        {
+            string message = "REQUEST-FOLLOWERS";
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Followers display request sent!\n");
             logs.ScrollToCaret();
         }
     }

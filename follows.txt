@@ -1,6 +1,6 @@
 fatihterim  meryemboz lili
 meryemboz  edaerdem fatihterim
-metegazoz  lili
+metegazoz  lili fatihterim
 pantermuslera 
 cembaydi 
 edaerdem 
@@ -10,9 +10,9 @@ blainemcclain
 desiraemitchell 
 ebrarkarakurt 
 joannadawson 
-lili 
+lili  ebrarkarakurt
 parkerpetersen 
-zehragunes 
+zehragunes  lili metegazoz fatihterim suada alexhagi
 suada 
 kamerongregory 
 alexhagi 
