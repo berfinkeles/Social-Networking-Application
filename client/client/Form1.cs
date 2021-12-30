@@ -62,12 +62,14 @@ namespace client
                         textBox_message.Enabled = true;
                         textBox_delete.Enabled = true;
                         textBox_follow.Enabled = true;
+                        textBox_block.Enabled = true;
                         button_disconnect.Enabled = true;
                         button_send.Enabled = true;
                         button_delete.Enabled = true;
                         button_feed.Enabled = true;
                         button_users.Enabled = true;
                         button_follow.Enabled = true;
+                        button_block.Enabled = true;
                         button_reqFollows.Enabled = true;
                         button_reqFollowers.Enabled = true;
                         checkBox_onlyfollows.Enabled = true;
@@ -154,9 +156,35 @@ namespace client
                         logs.AppendText("You can not follow yourself!\n");
                         logs.ScrollToCaret();
                     }
+                    else if (incomingMessage.Contains("B-L-O-C-K-E-D"))
+                    {
+                        logs.AppendText("You are blocked by this user\n");
+                        logs.ScrollToCaret();
+                    }
                     else if (incomingMessage.Contains("S-U-C-C-F-O-L"))
                     {
                         logs.AppendText("Successfully followed user!\n");
+                        logs.ScrollToCaret();
+                    }//block
+                    else if (incomingMessage.Contains("N-O-T-I-N-D-B-BLOCK"))
+                    {
+                        logs.AppendText("Requested user to block is not in the database\n");
+                        logs.AppendText("Please enter a valid username\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("A-L-R-B-L-O"))
+                    {
+                        logs.AppendText("You already blocked this user\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("B-L-O-YOURSELF"))
+                    {
+                        logs.AppendText("You can not block yourself!\n");
+                        logs.ScrollToCaret();
+                    }
+                    else if (incomingMessage.Contains("S-U-C-C-B-L-O"))
+                    {
+                        logs.AppendText("Successfully blocked user!\n");
                         logs.ScrollToCaret();
                     }
                     else if (incomingMessage.Contains("D-E-L-E-T-E-SUCC"))
@@ -282,6 +310,8 @@ namespace client
             button_reqFollows.Enabled = false;
             button_reqFollowers.Enabled = false;
             textBox_message.Enabled = false;
+            textBox_block.Enabled = false;
+            button_block.Enabled = false;
             checkBox_onlyfollows.Enabled = false;
             checkBox_mysweets.Enabled = false;
 
@@ -333,6 +363,15 @@ namespace client
             Byte[] buffer = Encoding.Default.GetBytes(message);
             clientSocket.Send(buffer);
             logs.AppendText("Followers display request sent!\n");
+            logs.ScrollToCaret();
+        }
+
+        private void button_block_Click(object sender, EventArgs e)
+        {
+            string message = "B-L-O-C-K" + textBox_block.Text;
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+            logs.AppendText("Block request sent!\n");
             logs.ScrollToCaret();
         }
     }

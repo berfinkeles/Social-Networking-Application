@@ -85,3 +85,12 @@ C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj
 C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.Form1.resources
 C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.Properties.Resources.resources
 C:\Users\puren\Desktop\408-sTEP3\Social-Networking-Application\server\server\obj\Debug\server.csproj.GenerateResource.Cache
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\bin\Debug\server.exe.config
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.exe
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.pdb
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.csprojResolveAssemblyReference.cache
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.Form1.resources
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.Properties.Resources.resources
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\obj\Debug\server.csproj.GenerateResource.Cache
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\bin\Debug\server.exe
+C:\Users\cemrt\Desktop\Social-Networking-Application-master\Social-Networking-Application-master\server\server\bin\Debug\server.pdb
