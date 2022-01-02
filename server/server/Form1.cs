@@ -39,6 +39,7 @@ namespace server
         List<string> users = new List<string>(); // usernames in the "user-db.txt"
         List<string> connected_users = new List<string>(); // names of connected users
         List<Sweet> sweets = new List<Sweet>();
+
         List<string> feed = new List<string>();
 
         bool terminating = false;
@@ -53,11 +54,11 @@ namespace server
             InitializeComponent();
         }
 
-        private void read_file() // reads the user-db.txt and stores contents in users list
+        private void read_file(string filename) // reads the user-db.txt and stores contents in users list
         {
             string line;
             string workingDirectory = Environment.CurrentDirectory;
-            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "user-db.txt");
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, filename);
             System.IO.StreamReader file = new System.IO.StreamReader(path);
             while ((line = file.ReadLine()) != null)
             {
@@ -110,7 +111,7 @@ namespace server
         private void button_listen_Click(object sender, EventArgs e)
         {
             int serverPort;
-            read_file(); // read user-db.txt
+            read_file("user-db.txt"); // read user-db.txt
             string workingDirectory = Environment.CurrentDirectory;
             var path_follow = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
             // Initialize follows.txt
@@ -127,8 +128,23 @@ namespace server
                     
                 }
             }
+            var path_block = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "blocks.txt");
+            // Initialize follows.txt
+            if (!File.Exists(Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "blocks.txt")))
+            {
 
-            
+                using (FileStream fs = File.Create(path_block))
+                {
+                    foreach (string usr in users)
+                    {
+                        Byte[] title = new UTF8Encoding(true).GetBytes(usr + " \n");
+                        fs.Write(title, 0, title.Length);
+                    }
+
+                }
+            }
+
+
 
             // Initialize messages.txt
             var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "messages.txt");
@@ -295,7 +311,11 @@ namespace server
                             {
                                 if (message.Substring(0, message.IndexOf(' ')) != username)
                                 {
-                                    feed_messages = feed_messages + message + "\n";
+                                    if (!(blocks(message.Substring(0, message.IndexOf(' ')), username)) )//if user is not by the sweeter
+                                    {
+                                        feed_messages = feed_messages + message + "\n";
+                                    }
+                                    
                                 }
                             }
                             send_message(thisClient, feed_messages);
@@ -407,11 +427,20 @@ namespace server
                                             }
                                             else //add user to followings
                                             {
-                                                arrLine[i] = arrLine[i] + " " + user_to_follow;
-                                                File.WriteAllLines(path, arrLine);
-                                                logs.AppendText(username + " succesfully followed " + user_to_follow + "\n");
-                                                send_message(thisClient, "S-U-C-C-F-O-L");
-                                                break;
+                                                if (blocks(user_to_follow, username))//prevent from following if blocekd
+                                                {
+                                                    logs.AppendText(user_to_follow + " blocked " + username + "\n");
+                                                    send_message(thisClient, "B-L-O-C-K-E-D");
+                                                }
+                                                else
+                                                {
+                                                    arrLine[i] = arrLine[i] + " " + user_to_follow;
+                                                    File.WriteAllLines(path, arrLine);
+                                                    logs.AppendText(username + " succesfully followed " + user_to_follow + "\n");
+                                                    send_message(thisClient, "S-U-C-C-F-O-L");
+                                                    break;
+                                                }
+                                                
 
                                             }
                                         }
@@ -425,6 +454,72 @@ namespace server
                             {
                                 string Message = "N-O-T-I-N-D-B-FOLLOW";
                                 logs.AppendText("Requested user to follow is not in the database\n");
+                                send_message(thisClient, Message);
+                            }
+
+                        }
+
+                    }
+                    else if (incomingMessage.Contains("B-L-O-C-K"))
+                    {
+                        string user_to_block = incomingMessage.Substring(9);
+                        logs.AppendText(username + " requested to block " + incomingMessage.Substring(9) + "\n");
+                        if (username == user_to_block)
+                        {
+                            logs.AppendText("User can not block herself\n");
+                            send_message(thisClient, "B-L-O-YOURSELF");//DEAL WITH IT
+                        }
+                        else
+                        {
+
+                            bool inDatabase = false;
+                            string workingDirectory = Environment.CurrentDirectory;
+                            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "blocks.txt");
+                            foreach (string user in users)
+                            {
+                                if (user == user_to_block) // if user in ddatabase
+                                {
+                                    inDatabase = true;
+                                    string[] arrLine = File.ReadAllLines(path);
+                                    for (int i = 0; i < arrLine.Length; i++)
+                                    {
+                                        string array_user = arrLine[i];
+                                        if (array_user.Substring(0, array_user.IndexOf(" ")) == username)
+                                        {
+                                            if (array_user.Contains(user_to_block)) //contains
+                                            {
+                                                logs.AppendText(username + " already blocked " + user_to_block + "\n");
+                                                send_message(thisClient, "A-L-R-B-L-O");//DEAL WITH IT
+
+                                            }
+                                            else //add user to blocks
+                                            {
+                                                arrLine[i] = arrLine[i] + " " + user_to_block;
+                                                File.WriteAllLines(path, arrLine);
+                                                logs.AppendText(username + " succesfully blocked " + user_to_block + "\n");
+                                                if (follows(user_to_block, username)){
+                                                    deleteUserFromFollows(username, user_to_block);
+                                                }
+                                                //if (follows(username, user_to_block))
+                                                //{
+                                                //    deleteUserFromFollows(user_to_block, username);
+                                                //}
+
+                                                send_message(thisClient, "S-U-C-C-B-L-O");//DEAL WITH IT
+                                                break;
+
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                            if (inDatabase == false)
+                            {
+                                string Message = "N-O-T-I-N-D-B-BLOCK";
+                                logs.AppendText("Requested user to block is not in the database\n");
                                 send_message(thisClient, Message);
                             }
 
@@ -448,7 +543,7 @@ namespace server
                             {
                                 
                                 string rest_of_the_line = line.Substring(line.IndexOf(' ') + 1);
-                                if (rest_of_the_line == "")
+                                if (rest_of_the_line == "" || rest_of_the_line == " ")
                                 {
                                     follows_message += "You dont follow anyone.\n";
                                 }
@@ -618,6 +713,96 @@ namespace server
             terminating = true;
             Environment.Exit(0);
         }
+
+        private void deleteUserFromFollows(string user_to_delete, string username)
+        {
+            
+            string followings = get_followings(username);
+            string old_line = username + " " + followings;
+            foreach (string user in followings.Split(' '))
+            {
+                if(user_to_delete == user)
+                {
+                    followings = followings.Replace(user, "");
+                }
+            }
+            string new_line = username + " " + followings;
+            // get the project directory
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+
+            // Write all follows except the one to be deleted
+            string tempFile = Path.GetTempFileName();
+
+            using (var sr = new StreamReader(path))
+            using (StreamWriter fl = File.AppendText(tempFile))
+            {
+                string line;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line == old_line)
+                    {
+                        line = new_line;                        
+                    }
+                    fl.WriteLine(line);
+
+                }
+                
+            }
+            File.Delete(path);
+            File.Move(tempFile, path);
+
+        }
+        
+        private bool follows(string follower, string followed)
+        {
+            bool follows = false;
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "follows.txt");
+
+            string[] arrLine = File.ReadAllLines(path);
+            for (int i = 0; i < arrLine.Length; i++)
+            {
+                string array_user = arrLine[i];
+                if (array_user.Substring(0, array_user.IndexOf(" ")) == follower)
+                {
+                    if (array_user.Contains(followed)) //contains
+                    {
+                        follows = true;
+                        break;
+                    }
+                }
+            }
+
+
+            return follows;
+        }
+
+        private bool blocks(string blocker, string blocked)
+        {
+            bool blocks = false;
+            string workingDirectory = Environment.CurrentDirectory;
+            var path = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName, "blocks.txt");
+
+            string[] arrLine = File.ReadAllLines(path);
+            for (int i = 0; i < arrLine.Length; i++)
+            {
+                string array_user = arrLine[i];
+                if (array_user.Substring(0, array_user.IndexOf(" ")) == blocker)
+                {
+                    if (array_user.Contains(blocked)) //contains
+                    {
+                        blocks = true;
+                        break;
+                    }
+                }
+            }
+
+
+            return blocks;
+        }
+
 
         private string get_followings(string username)
         {
