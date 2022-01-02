@@ -311,7 +311,7 @@ namespace server
                             {
                                 if (message.Substring(0, message.IndexOf(' ')) != username)
                                 {
-                                    if (!(blocks(message.Substring(0, message.IndexOf(' ')), username)) && !(blocks(username, message.Substring(0, message.IndexOf(' ')))))//if user is not by the sweeter
+                                    if (!(blocks(message.Substring(0, message.IndexOf(' ')), username)) )//if user is not by the sweeter
                                     {
                                         feed_messages = feed_messages + message + "\n";
                                     }
@@ -500,10 +500,10 @@ namespace server
                                                 if (follows(user_to_block, username)){
                                                     deleteUserFromFollows(username, user_to_block);
                                                 }
-                                                if (follows(username, user_to_block))
-                                                {
-                                                    deleteUserFromFollows(user_to_block, username);
-                                                }
+                                                //if (follows(username, user_to_block))
+                                                //{
+                                                //    deleteUserFromFollows(user_to_block, username);
+                                                //}
 
                                                 send_message(thisClient, "S-U-C-C-B-L-O");//DEAL WITH IT
                                                 break;
@@ -543,7 +543,7 @@ namespace server
                             {
                                 
                                 string rest_of_the_line = line.Substring(line.IndexOf(' ') + 1);
-                                if (rest_of_the_line == "")
+                                if (rest_of_the_line == "" || rest_of_the_line == " ")
                                 {
                                     follows_message += "You dont follow anyone.\n";
                                 }

@@ -229,6 +229,18 @@ namespace client
                         button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
+                        button_feed.Enabled = false;
+                        button_users.Enabled = false;
+                        button_reqFollows.Enabled = false;
+                        button_reqFollowers.Enabled = false;
+                        textBox_block.Enabled = false;
+                        button_block.Enabled = false;
+                        checkBox_onlyfollows.Enabled = false;
+                        checkBox_mysweets.Enabled = false;
+                        textBox_follow.Enabled = false;
+                        button_follow.Enabled = false;
+                        textBox_delete.Enabled = false;
+                        button_delete.Enabled = false;
                     }
 
                     clientSocket.Close();
@@ -314,6 +326,10 @@ namespace client
             button_block.Enabled = false;
             checkBox_onlyfollows.Enabled = false;
             checkBox_mysweets.Enabled = false;
+            textBox_follow.Enabled = false;
+            button_follow.Enabled = false;
+            textBox_delete.Enabled = false;
+            button_delete.Enabled = false;
 
             clientSocket.Disconnect(false);
             logs.AppendText("Disconnected\n");
